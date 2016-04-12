@@ -148,7 +148,7 @@
             this.objectCountText.Name = "objectCountText";
             this.objectCountText.Size = new System.Drawing.Size(196, 20);
             this.objectCountText.TabIndex = 12;
-            this.objectCountText.Text = "200";
+            this.objectCountText.Text = "2000";
             // 
             // threadCountText
             // 

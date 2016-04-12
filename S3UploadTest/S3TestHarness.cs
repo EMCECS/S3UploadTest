@@ -15,12 +15,6 @@ namespace S3UploadTest
     {
         public string Name { set; get; }
         public byte[] Data { set; get; }
-
-        public void FillData()
-        {
-            Random r = new Random();
-            r.NextBytes(Data);
-        }
     }
 
     public class S3TestHarness
@@ -43,13 +37,13 @@ namespace S3UploadTest
 
         public TimeSpan Duration { get; private set; }
 
-        IAmazonS3 s3;
+        AmazonS3Client s3;
         private string bucketName;
         private List<TestData> data;
 
         public S3TestHarness()
         {
-            BufferSize = 8192;
+            BufferSize = -1;
             successCount = 0;
             failureCount = 0;
         }
@@ -82,15 +76,21 @@ namespace S3UploadTest
 
         private void connect()
         {
-            s3 = new AmazonS3Client(new BasicAWSCredentials(AccessKey, SecretKey),
-                new AmazonS3Config()
-                {
-                    ConnectionLimit = ThreadCount,
-                    BufferSize = this.BufferSize,
-                    ForcePathStyle = true,
-                    SignatureVersion = "2",
-                    ServiceURL = Endpoint
-                });
+            AmazonS3Config config = new AmazonS3Config()
+            {
+                ConnectionLimit = ThreadCount,
+                ForcePathStyle = true,
+                SignatureVersion = "2",
+                ServiceURL = Endpoint
+            };
+
+            if(BufferSize != -1)
+            {
+                config.BufferSize = BufferSize;
+            }
+            s3 = new AmazonS3Client(new BasicAWSCredentials(AccessKey, SecretKey), config);
+
+            Parent.LogOutput(string.Format(" - Buffer size is {0} bytes", s3.Config.BufferSize));
 
         }
 
@@ -105,20 +105,20 @@ namespace S3UploadTest
 
         private void generateTestData()
         {
+            // Generate random data.  ECS may exhibit abnormally high performance 
+            // for compressible data.
+            Random r = new Random();
+            byte[] bytes = new byte[ObjectSize];
+            r.NextBytes(bytes);
+
             data = new List<TestData>();
             for(int i = 0; i < ObjectCount; i++)
             {
                 data.Add(new TestData() {
                     Name = Guid.NewGuid().ToString("D"),
-                    Data = new byte[ObjectSize]
+                    Data = bytes
                 });
             }
-
-            // Generate random data for upload. ECS may exhibit abnormally high performance if
-            // data is highly compressible.
-            Parallel.ForEach(data, d => {
-                d.FillData();
-            });
         }
 
         private void runTest()
@@ -144,9 +144,21 @@ namespace S3UploadTest
 
         private void cleanupObjects()
         {
-            ListObjectsResponse resp = s3.ListObjects(bucketName);
+            ListObjectsResponse resp = null;
             do
             {
+                if(resp == null)
+                {
+                    resp = s3.ListObjects(bucketName);
+                } else
+                {
+                    // Continue listing from marker
+                    resp = s3.ListObjects(new ListObjectsRequest()
+                    {
+                        BucketName = bucketName,
+                        Marker = resp.NextMarker
+                    });
+                }
                 Parallel.ForEach(resp.S3Objects, obj => {
                     s3.DeleteObject(new DeleteObjectRequest()
                     {

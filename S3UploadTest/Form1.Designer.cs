@@ -76,6 +76,8 @@ namespace S3UploadTest
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.currentThreads = new System.Windows.Forms.Label();
             this.threadUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.useVhostCheck = new System.Windows.Forms.CheckBox();
+            this.noCleanupCheck = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +85,7 @@ namespace S3UploadTest
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(44, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 13);
             this.label1.TabIndex = 0;
@@ -92,7 +94,7 @@ namespace S3UploadTest
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(31, 39);
+            this.label2.Location = new System.Drawing.Point(62, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 1;
@@ -101,7 +103,7 @@ namespace S3UploadTest
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(41, 64);
+            this.label3.Location = new System.Drawing.Point(72, 64);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(49, 13);
             this.label3.TabIndex = 2;
@@ -110,7 +112,7 @@ namespace S3UploadTest
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(29, 91);
+            this.label4.Location = new System.Drawing.Point(60, 114);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(61, 13);
             this.label4.TabIndex = 3;
@@ -119,7 +121,7 @@ namespace S3UploadTest
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(21, 118);
+            this.label5.Location = new System.Drawing.Point(52, 137);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(69, 13);
             this.label5.TabIndex = 4;
@@ -128,7 +130,7 @@ namespace S3UploadTest
             // bufferSizeCheck
             // 
             this.bufferSizeCheck.AutoSize = true;
-            this.bufferSizeCheck.Location = new System.Drawing.Point(13, 173);
+            this.bufferSizeCheck.Location = new System.Drawing.Point(13, 196);
             this.bufferSizeCheck.Name = "bufferSizeCheck";
             this.bufferSizeCheck.Size = new System.Drawing.Size(77, 17);
             this.bufferSizeCheck.TabIndex = 5;
@@ -139,7 +141,7 @@ namespace S3UploadTest
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(29, 148);
+            this.label6.Location = new System.Drawing.Point(29, 171);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(92, 13);
             this.label6.TabIndex = 6;
@@ -168,7 +170,7 @@ namespace S3UploadTest
             // 
             // objectSizeText
             // 
-            this.objectSizeText.Location = new System.Drawing.Point(127, 88);
+            this.objectSizeText.Location = new System.Drawing.Point(127, 111);
             this.objectSizeText.Name = "objectSizeText";
             this.objectSizeText.Size = new System.Drawing.Size(196, 20);
             this.objectSizeText.TabIndex = 11;
@@ -176,7 +178,7 @@ namespace S3UploadTest
             // 
             // objectCountText
             // 
-            this.objectCountText.Location = new System.Drawing.Point(127, 111);
+            this.objectCountText.Location = new System.Drawing.Point(127, 134);
             this.objectCountText.Name = "objectCountText";
             this.objectCountText.Size = new System.Drawing.Size(196, 20);
             this.objectCountText.TabIndex = 12;
@@ -184,7 +186,7 @@ namespace S3UploadTest
             // 
             // threadCountText
             // 
-            this.threadCountText.Location = new System.Drawing.Point(127, 145);
+            this.threadCountText.Location = new System.Drawing.Point(127, 168);
             this.threadCountText.Name = "threadCountText";
             this.threadCountText.Size = new System.Drawing.Size(196, 20);
             this.threadCountText.TabIndex = 13;
@@ -192,7 +194,7 @@ namespace S3UploadTest
             // 
             // bufferSizeText
             // 
-            this.bufferSizeText.Location = new System.Drawing.Point(127, 171);
+            this.bufferSizeText.Location = new System.Drawing.Point(127, 194);
             this.bufferSizeText.Name = "bufferSizeText";
             this.bufferSizeText.Size = new System.Drawing.Size(100, 20);
             this.bufferSizeText.TabIndex = 14;
@@ -204,9 +206,9 @@ namespace S3UploadTest
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.outputText);
-            this.groupBox1.Location = new System.Drawing.Point(13, 249);
+            this.groupBox1.Location = new System.Drawing.Point(13, 272);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(448, 331);
+            this.groupBox1.Size = new System.Drawing.Size(448, 308);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Output";
@@ -220,12 +222,12 @@ namespace S3UploadTest
             this.outputText.Multiline = true;
             this.outputText.Name = "outputText";
             this.outputText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputText.Size = new System.Drawing.Size(439, 305);
+            this.outputText.Size = new System.Drawing.Size(439, 282);
             this.outputText.TabIndex = 0;
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(12, 220);
+            this.startButton.Location = new System.Drawing.Point(12, 243);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);
             this.startButton.TabIndex = 16;
@@ -236,7 +238,7 @@ namespace S3UploadTest
             // minThreadCheck
             // 
             this.minThreadCheck.AutoSize = true;
-            this.minThreadCheck.Location = new System.Drawing.Point(13, 148);
+            this.minThreadCheck.Location = new System.Drawing.Point(13, 171);
             this.minThreadCheck.Name = "minThreadCheck";
             this.minThreadCheck.Size = new System.Drawing.Size(15, 14);
             this.minThreadCheck.TabIndex = 17;
@@ -245,7 +247,7 @@ namespace S3UploadTest
             // maxConnectionCheck
             // 
             this.maxConnectionCheck.AutoSize = true;
-            this.maxConnectionCheck.Location = new System.Drawing.Point(13, 200);
+            this.maxConnectionCheck.Location = new System.Drawing.Point(13, 223);
             this.maxConnectionCheck.Name = "maxConnectionCheck";
             this.maxConnectionCheck.Size = new System.Drawing.Size(15, 14);
             this.maxConnectionCheck.TabIndex = 20;
@@ -253,7 +255,7 @@ namespace S3UploadTest
             // 
             // maxConnectionText
             // 
-            this.maxConnectionText.Location = new System.Drawing.Point(127, 197);
+            this.maxConnectionText.Location = new System.Drawing.Point(127, 220);
             this.maxConnectionText.Name = "maxConnectionText";
             this.maxConnectionText.Size = new System.Drawing.Size(196, 20);
             this.maxConnectionText.TabIndex = 19;
@@ -262,7 +264,7 @@ namespace S3UploadTest
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(29, 200);
+            this.label7.Location = new System.Drawing.Point(29, 223);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(89, 13);
             this.label7.TabIndex = 18;
@@ -271,7 +273,7 @@ namespace S3UploadTest
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(330, 200);
+            this.label8.Location = new System.Drawing.Point(330, 223);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(57, 13);
             this.label8.TabIndex = 21;
@@ -280,7 +282,7 @@ namespace S3UploadTest
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(330, 173);
+            this.label9.Location = new System.Drawing.Point(330, 196);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(69, 13);
             this.label9.TabIndex = 22;
@@ -289,7 +291,7 @@ namespace S3UploadTest
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(330, 148);
+            this.label10.Location = new System.Drawing.Point(330, 171);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(72, 13);
             this.label10.TabIndex = 23;
@@ -321,11 +323,33 @@ namespace S3UploadTest
             this.threadUpdateTimer.Interval = 2000;
             this.threadUpdateTimer.Tick += new System.EventHandler(this.threadUpdateTimer_Tick);
             // 
+            // useVhostCheck
+            // 
+            this.useVhostCheck.AutoSize = true;
+            this.useVhostCheck.Location = new System.Drawing.Point(127, 88);
+            this.useVhostCheck.Name = "useVhostCheck";
+            this.useVhostCheck.Size = new System.Drawing.Size(113, 17);
+            this.useVhostCheck.TabIndex = 25;
+            this.useVhostCheck.Text = "use vhost buckets";
+            this.useVhostCheck.UseVisualStyleBackColor = true;
+            // 
+            // noCleanupCheck
+            // 
+            this.noCleanupCheck.AutoSize = true;
+            this.noCleanupCheck.Location = new System.Drawing.Point(333, 137);
+            this.noCleanupCheck.Name = "noCleanupCheck";
+            this.noCleanupCheck.Size = new System.Drawing.Size(82, 17);
+            this.noCleanupCheck.TabIndex = 26;
+            this.noCleanupCheck.Text = "No Cleanup";
+            this.noCleanupCheck.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(473, 592);
+            this.Controls.Add(this.noCleanupCheck);
+            this.Controls.Add(this.useVhostCheck);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -390,6 +414,8 @@ namespace S3UploadTest
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label currentThreads;
         private System.Windows.Forms.Timer threadUpdateTimer;
+        private System.Windows.Forms.CheckBox useVhostCheck;
+        private System.Windows.Forms.CheckBox noCleanupCheck;
     }
 }
 

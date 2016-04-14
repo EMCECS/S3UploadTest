@@ -50,6 +50,8 @@ namespace S3UploadTest
         public int MinThreads { get; set; }
         public int MaxConnections { get; set; }
         public Form1 Parent { set; get; }
+        public bool UseVhostBuckets { get; set; }
+        public bool NoCleanup { get; set; }
 
         public int FailureCount { get { return failureCount; } }
         private int failureCount;
@@ -69,39 +71,51 @@ namespace S3UploadTest
             failureCount = 0;
             MinThreads = -1;
             MaxConnections = -1;
+            UseVhostBuckets = false;
         }
 
         public void Start()
         {
-            Parent.LogOutput("Initializing Connection...");
-            connect();
+            try {
+                Parent.LogOutput("Initializing Connection...");
+                connect();
 
-            Parent.LogOutput("Creating Bucket...");
-            createBucket();
+                Parent.LogOutput("Creating Bucket...");
+                createBucket();
 
-            Parent.LogOutput("Generating Test Data...");
-            generateTestData();
+                Parent.LogOutput("Generating Test Data...");
+                generateTestData();
 
-            Parent.LogOutput("Uploading Objects...");
-            startTime = DateTime.Now;
-            runTest();
-            Duration = DateTime.Now - startTime;
-            Parent.LogOutput("Upload Complete.");
+                Parent.LogOutput("Uploading Objects...");
+                startTime = DateTime.Now;
+                runTest();
+                Duration = DateTime.Now - startTime;
+                Parent.LogOutput("Upload Complete.");
 
-            Parent.LogOutput("Cleaning up objects");
-            cleanupObjects();
+                if (NoCleanup)
+                {
+                    Parent.LogOutput(string.Format("Cleanup skipped, see bucket {0}", bucketName));
+                } else { 
+                    Parent.LogOutput("Cleaning up objects");
+                    cleanupObjects();
 
-            Parent.LogOutput("Removing test bucket...");
-            deleteBucket();
+                    Parent.LogOutput("Removing test bucket...");
+                    deleteBucket();
+                }
 
-            printSummary();
+
+                printSummary();
+            } catch (Exception e)
+            {
+                Parent.LogOutput(string.Format("CRITICAL FAILURE: {0}\r\n{1}", e.Message, e.StackTrace));
+            }
         }
 
         private void connect()
         {
             AmazonS3Config config = new AmazonS3Config()
             {
-                ForcePathStyle = true,
+                ForcePathStyle = (!UseVhostBuckets),
                 SignatureVersion = "2",
                 ServiceURL = Endpoint
             };
@@ -165,7 +179,11 @@ namespace S3UploadTest
                 }
             }
 
-            Parallel.ForEach(data, d => {
+            ParallelOptions opts = new ParallelOptions();
+            // Don't bother forking more threads than connections.
+            opts.MaxDegreeOfParallelism = s3.Config.ConnectionLimit;
+
+            Parallel.ForEach(data, opts, d => {
                 try
                 {
                     s3.PutObject(new PutObjectRequest()

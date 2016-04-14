@@ -56,7 +56,9 @@ namespace S3UploadTest
                 Endpoint = endpointText.Text.Trim(),
                 ObjectCount = int.Parse(objectCountText.Text.Trim()),
                 ObjectSize = int.Parse(objectSizeText.Text.Trim()),
-                Parent = this
+                Parent = this,
+                UseVhostBuckets = useVhostCheck.Checked,
+                NoCleanup = noCleanupCheck.Checked
             };
             if(bufferSizeCheck.Checked)
             {

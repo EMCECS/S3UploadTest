@@ -56,12 +56,19 @@ namespace S3UploadTest
                 Endpoint = endpointText.Text.Trim(),
                 ObjectCount = int.Parse(objectCountText.Text.Trim()),
                 ObjectSize = int.Parse(objectSizeText.Text.Trim()),
-                ThreadCount = int.Parse(threadCountText.Text.Trim()),
                 Parent = this
             };
             if(bufferSizeCheck.Checked)
             {
                 harness.BufferSize = int.Parse(bufferSizeText.Text.Trim());
+            }
+            if(minThreadCheck.Checked)
+            {
+                harness.MinThreads = int.Parse(threadCountText.Text.Trim());
+            }
+            if(maxConnectionCheck.Checked)
+            {
+                harness.MaxConnections = int.Parse(maxConnectionText.Text.Trim());
             }
 
             startButton.Enabled = false;
@@ -103,6 +110,17 @@ namespace S3UploadTest
         private void clearOutput()
         {
             outputText.Text = "";
+        }
+
+        private void threadUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if(currentThreads != null)
+            {
+                int maxWorker, maxIo, availableWorker, availableIo;
+                ThreadPool.GetMaxThreads(out maxWorker, out maxIo);
+                ThreadPool.GetAvailableThreads(out availableWorker, out availableIo);
+                currentThreads.Text = "" + (maxWorker - availableWorker);
+            }
         }
     }
 }

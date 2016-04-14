@@ -47,7 +47,8 @@ namespace S3UploadTest
         public int ObjectCount { get; set; }
         public int ObjectSize { get; set; }
         public int BufferSize { get; set; }
-        public int ThreadCount { get; set; }
+        public int MinThreads { get; set; }
+        public int MaxConnections { get; set; }
         public Form1 Parent { set; get; }
 
         public int FailureCount { get { return failureCount; } }
@@ -66,6 +67,8 @@ namespace S3UploadTest
             BufferSize = -1;
             successCount = 0;
             failureCount = 0;
+            MinThreads = -1;
+            MaxConnections = -1;
         }
 
         public void Start()
@@ -98,11 +101,14 @@ namespace S3UploadTest
         {
             AmazonS3Config config = new AmazonS3Config()
             {
-                ConnectionLimit = ThreadCount,
                 ForcePathStyle = true,
                 SignatureVersion = "2",
                 ServiceURL = Endpoint
             };
+            if(MaxConnections != -1)
+            {
+                config.ConnectionLimit = MaxConnections;
+            }
 
             if(BufferSize != -1)
             {
@@ -111,7 +117,7 @@ namespace S3UploadTest
             s3 = new AmazonS3Client(new BasicAWSCredentials(AccessKey, SecretKey), config);
 
             Parent.LogOutput(string.Format(" - Buffer size is {0} bytes", s3.Config.BufferSize));
-
+            Parent.LogOutput(string.Format(" - Connection limit is {0}", s3.Config.ConnectionLimit));
         }
 
         private void createBucket()
@@ -143,6 +149,22 @@ namespace S3UploadTest
 
         private void runTest()
         {
+            int workerThreads = 0;
+            int ioThreads = 0;
+
+            ThreadPool.GetMinThreads(out workerThreads, out ioThreads);
+            Parent.LogOutput(string.Format(" - Min threads: worker: {0} IO: {1}", workerThreads, ioThreads));
+
+            if(MinThreads != -1)
+            {
+                Parent.LogOutput(string.Format(" -> Setting Min worker threads to {0}", MinThreads));
+                bool success = ThreadPool.SetMinThreads(MinThreads, ioThreads);
+                if (!success)
+                {
+                    Parent.LogOutput("  FAILED!");
+                }
+            }
+
             Parallel.ForEach(data, d => {
                 try
                 {

@@ -48,6 +48,7 @@ namespace S3UploadTest
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -65,7 +66,18 @@ namespace S3UploadTest
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.outputText = new System.Windows.Forms.TextBox();
             this.startButton = new System.Windows.Forms.Button();
+            this.minThreadCheck = new System.Windows.Forms.CheckBox();
+            this.maxConnectionCheck = new System.Windows.Forms.CheckBox();
+            this.maxConnectionText = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.currentThreads = new System.Windows.Forms.Label();
+            this.threadUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -116,7 +128,7 @@ namespace S3UploadTest
             // bufferSizeCheck
             // 
             this.bufferSizeCheck.AutoSize = true;
-            this.bufferSizeCheck.Location = new System.Drawing.Point(13, 171);
+            this.bufferSizeCheck.Location = new System.Drawing.Point(13, 173);
             this.bufferSizeCheck.Name = "bufferSizeCheck";
             this.bufferSizeCheck.Size = new System.Drawing.Size(77, 17);
             this.bufferSizeCheck.TabIndex = 5;
@@ -127,36 +139,36 @@ namespace S3UploadTest
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 145);
+            this.label6.Location = new System.Drawing.Point(29, 148);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(72, 13);
+            this.label6.Size = new System.Drawing.Size(92, 13);
             this.label6.TabIndex = 6;
-            this.label6.Text = "Thread Count";
+            this.label6.Text = "Min Thread Count";
             // 
             // accessKeyText
             // 
-            this.accessKeyText.Location = new System.Drawing.Point(96, 10);
+            this.accessKeyText.Location = new System.Drawing.Point(127, 10);
             this.accessKeyText.Name = "accessKeyText";
             this.accessKeyText.Size = new System.Drawing.Size(196, 20);
             this.accessKeyText.TabIndex = 8;
             // 
             // secretKeyText
             // 
-            this.secretKeyText.Location = new System.Drawing.Point(96, 36);
+            this.secretKeyText.Location = new System.Drawing.Point(127, 36);
             this.secretKeyText.Name = "secretKeyText";
             this.secretKeyText.Size = new System.Drawing.Size(196, 20);
             this.secretKeyText.TabIndex = 9;
             // 
             // endpointText
             // 
-            this.endpointText.Location = new System.Drawing.Point(96, 61);
+            this.endpointText.Location = new System.Drawing.Point(127, 61);
             this.endpointText.Name = "endpointText";
             this.endpointText.Size = new System.Drawing.Size(196, 20);
             this.endpointText.TabIndex = 10;
             // 
             // objectSizeText
             // 
-            this.objectSizeText.Location = new System.Drawing.Point(96, 88);
+            this.objectSizeText.Location = new System.Drawing.Point(127, 88);
             this.objectSizeText.Name = "objectSizeText";
             this.objectSizeText.Size = new System.Drawing.Size(196, 20);
             this.objectSizeText.TabIndex = 11;
@@ -164,7 +176,7 @@ namespace S3UploadTest
             // 
             // objectCountText
             // 
-            this.objectCountText.Location = new System.Drawing.Point(96, 115);
+            this.objectCountText.Location = new System.Drawing.Point(127, 111);
             this.objectCountText.Name = "objectCountText";
             this.objectCountText.Size = new System.Drawing.Size(196, 20);
             this.objectCountText.TabIndex = 12;
@@ -172,19 +184,19 @@ namespace S3UploadTest
             // 
             // threadCountText
             // 
-            this.threadCountText.Location = new System.Drawing.Point(96, 142);
+            this.threadCountText.Location = new System.Drawing.Point(127, 145);
             this.threadCountText.Name = "threadCountText";
             this.threadCountText.Size = new System.Drawing.Size(196, 20);
             this.threadCountText.TabIndex = 13;
-            this.threadCountText.Text = "100";
+            this.threadCountText.Text = "25";
             // 
             // bufferSizeText
             // 
-            this.bufferSizeText.Location = new System.Drawing.Point(96, 169);
+            this.bufferSizeText.Location = new System.Drawing.Point(127, 171);
             this.bufferSizeText.Name = "bufferSizeText";
             this.bufferSizeText.Size = new System.Drawing.Size(100, 20);
             this.bufferSizeText.TabIndex = 14;
-            this.bufferSizeText.Text = "8192";
+            this.bufferSizeText.Text = "131072";
             // 
             // groupBox1
             // 
@@ -192,9 +204,9 @@ namespace S3UploadTest
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.outputText);
-            this.groupBox1.Location = new System.Drawing.Point(13, 195);
+            this.groupBox1.Location = new System.Drawing.Point(13, 249);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(448, 227);
+            this.groupBox1.Size = new System.Drawing.Size(448, 331);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Output";
@@ -207,12 +219,13 @@ namespace S3UploadTest
             this.outputText.Location = new System.Drawing.Point(3, 20);
             this.outputText.Multiline = true;
             this.outputText.Name = "outputText";
-            this.outputText.Size = new System.Drawing.Size(439, 201);
+            this.outputText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.outputText.Size = new System.Drawing.Size(439, 305);
             this.outputText.TabIndex = 0;
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(360, 171);
+            this.startButton.Location = new System.Drawing.Point(12, 220);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);
             this.startButton.TabIndex = 16;
@@ -220,11 +233,107 @@ namespace S3UploadTest
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
+            // minThreadCheck
+            // 
+            this.minThreadCheck.AutoSize = true;
+            this.minThreadCheck.Location = new System.Drawing.Point(13, 148);
+            this.minThreadCheck.Name = "minThreadCheck";
+            this.minThreadCheck.Size = new System.Drawing.Size(15, 14);
+            this.minThreadCheck.TabIndex = 17;
+            this.minThreadCheck.UseVisualStyleBackColor = true;
+            // 
+            // maxConnectionCheck
+            // 
+            this.maxConnectionCheck.AutoSize = true;
+            this.maxConnectionCheck.Location = new System.Drawing.Point(13, 200);
+            this.maxConnectionCheck.Name = "maxConnectionCheck";
+            this.maxConnectionCheck.Size = new System.Drawing.Size(15, 14);
+            this.maxConnectionCheck.TabIndex = 20;
+            this.maxConnectionCheck.UseVisualStyleBackColor = true;
+            // 
+            // maxConnectionText
+            // 
+            this.maxConnectionText.Location = new System.Drawing.Point(127, 197);
+            this.maxConnectionText.Name = "maxConnectionText";
+            this.maxConnectionText.Size = new System.Drawing.Size(196, 20);
+            this.maxConnectionText.TabIndex = 19;
+            this.maxConnectionText.Text = "100";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(29, 200);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(89, 13);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Max Connections";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(330, 200);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 13);
+            this.label8.TabIndex = 21;
+            this.label8.Text = "default: 50";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(330, 173);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(69, 13);
+            this.label9.TabIndex = 22;
+            this.label9.Text = "default: 8192";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(330, 148);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 13);
+            this.label10.TabIndex = 23;
+            this.label10.Text = "default: CPUs";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.currentThreads);
+            this.groupBox2.Location = new System.Drawing.Point(333, 13);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(128, 68);
+            this.groupBox2.TabIndex = 24;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Current Threads";
+            // 
+            // currentThreads
+            // 
+            this.currentThreads.AutoSize = true;
+            this.currentThreads.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.currentThreads.Location = new System.Drawing.Point(7, 26);
+            this.currentThreads.Name = "currentThreads";
+            this.currentThreads.Size = new System.Drawing.Size(0, 24);
+            this.currentThreads.TabIndex = 0;
+            // 
+            // threadUpdateTimer
+            // 
+            this.threadUpdateTimer.Enabled = true;
+            this.threadUpdateTimer.Interval = 2000;
+            this.threadUpdateTimer.Tick += new System.EventHandler(this.threadUpdateTimer_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(473, 434);
+            this.ClientSize = new System.Drawing.Size(473, 592);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.maxConnectionCheck);
+            this.Controls.Add(this.maxConnectionText);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.minThreadCheck);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.bufferSizeText);
@@ -245,6 +354,8 @@ namespace S3UploadTest
             this.Text = "S3 Upload Test";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -269,6 +380,16 @@ namespace S3UploadTest
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox outputText;
         private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.CheckBox minThreadCheck;
+        private System.Windows.Forms.CheckBox maxConnectionCheck;
+        private System.Windows.Forms.TextBox maxConnectionText;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label currentThreads;
+        private System.Windows.Forms.Timer threadUpdateTimer;
     }
 }
 

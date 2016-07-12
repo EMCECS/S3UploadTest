@@ -49,6 +49,13 @@ namespace S3UploadTest
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -78,8 +85,19 @@ namespace S3UploadTest
             this.threadUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.useVhostCheck = new System.Windows.Forms.CheckBox();
             this.noCleanupCheck = new System.Windows.Forms.CheckBox();
+            this.performanceData = new System.Data.DataSet();
+            this.performance = new System.Data.DataTable();
+            this.time = new System.Data.DataColumn();
+            this.bandwidth = new System.Data.DataColumn();
+            this.tps = new System.Data.DataColumn();
+            this.errorRate = new System.Data.DataColumn();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.graphUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.performanceData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.performance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -208,7 +226,7 @@ namespace S3UploadTest
             this.groupBox1.Controls.Add(this.outputText);
             this.groupBox1.Location = new System.Drawing.Point(13, 272);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(448, 308);
+            this.groupBox1.Size = new System.Drawing.Size(478, 392);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Output";
@@ -222,7 +240,7 @@ namespace S3UploadTest
             this.outputText.Multiline = true;
             this.outputText.Name = "outputText";
             this.outputText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputText.Size = new System.Drawing.Size(439, 282);
+            this.outputText.Size = new System.Drawing.Size(469, 366);
             this.outputText.TabIndex = 0;
             // 
             // startButton
@@ -301,7 +319,7 @@ namespace S3UploadTest
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.currentThreads);
-            this.groupBox2.Location = new System.Drawing.Point(333, 13);
+            this.groupBox2.Location = new System.Drawing.Point(363, 10);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(128, 68);
             this.groupBox2.TabIndex = 24;
@@ -343,11 +361,87 @@ namespace S3UploadTest
             this.noCleanupCheck.Text = "No Cleanup";
             this.noCleanupCheck.UseVisualStyleBackColor = true;
             // 
+            // performanceData
+            // 
+            this.performanceData.DataSetName = "Performance Data";
+            this.performanceData.Tables.AddRange(new System.Data.DataTable[] {
+            this.performance});
+            // 
+            // performance
+            // 
+            this.performance.Columns.AddRange(new System.Data.DataColumn[] {
+            this.time,
+            this.bandwidth,
+            this.tps,
+            this.errorRate});
+            this.performance.TableName = "Performance";
+            // 
+            // time
+            // 
+            this.time.ColumnName = "Time";
+            this.time.DataType = typeof(System.DateTime);
+            this.time.DateTimeMode = System.Data.DataSetDateTime.Utc;
+            // 
+            // bandwidth
+            // 
+            this.bandwidth.ColumnName = "Bandwidth";
+            this.bandwidth.DataType = typeof(long);
+            // 
+            // tps
+            // 
+            this.tps.ColumnName = "TPS";
+            this.tps.DataType = typeof(int);
+            // 
+            // errorRate
+            // 
+            this.errorRate.ColumnName = "ErrorRate";
+            this.errorRate.DataType = typeof(double);
+            // 
+            // chart1
+            // 
+            chartArea1.Name = "BandwidthArea";
+            chartArea2.Name = "TPSArea";
+            chartArea3.Name = "ErrorRateArea";
+            this.chart1.ChartAreas.Add(chartArea1);
+            this.chart1.ChartAreas.Add(chartArea2);
+            this.chart1.ChartAreas.Add(chartArea3);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(497, 10);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "BandwidthArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Bandwidth";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            series2.ChartArea = "TPSArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "TPS";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            series3.ChartArea = "ErrorRateArea";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Error Rate";
+            series3.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Series.Add(series3);
+            this.chart1.Size = new System.Drawing.Size(541, 648);
+            this.chart1.TabIndex = 27;
+            this.chart1.Text = "chart1";
+            // 
+            // graphUpdateTimer
+            // 
+            this.graphUpdateTimer.Interval = 1000;
+            this.graphUpdateTimer.Tick += new System.EventHandler(this.graphUpdateTimer_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(473, 592);
+            this.ClientSize = new System.Drawing.Size(1050, 676);
+            this.Controls.Add(this.chart1);
             this.Controls.Add(this.noCleanupCheck);
             this.Controls.Add(this.useVhostCheck);
             this.Controls.Add(this.groupBox2);
@@ -376,10 +470,14 @@ namespace S3UploadTest
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "S3 Upload Test";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.performanceData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.performance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,6 +514,14 @@ namespace S3UploadTest
         private System.Windows.Forms.Timer threadUpdateTimer;
         private System.Windows.Forms.CheckBox useVhostCheck;
         private System.Windows.Forms.CheckBox noCleanupCheck;
+        private System.Data.DataSet performanceData;
+        private System.Data.DataTable performance;
+        private System.Data.DataColumn time;
+        private System.Data.DataColumn bandwidth;
+        private System.Data.DataColumn tps;
+        private System.Data.DataColumn errorRate;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Timer graphUpdateTimer;
     }
 }
 

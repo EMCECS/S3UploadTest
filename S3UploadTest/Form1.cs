@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -29,11 +30,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace S3UploadTest
 {
     public partial class Form1 : Form
     {
+        private S3TestHarness harness;
+
         public Form1()
         {
             InitializeComponent();
@@ -49,7 +53,7 @@ namespace S3UploadTest
         {
             clearOutput();
             LogOutput("Starting run...");
-            S3TestHarness harness = new S3TestHarness()
+            harness = new S3TestHarness()
             {
                 AccessKey = accessKeyText.Text.Trim(),
                 SecretKey = secretKeyText.Text.Trim(),
@@ -60,20 +64,27 @@ namespace S3UploadTest
                 UseVhostBuckets = useVhostCheck.Checked,
                 NoCleanup = noCleanupCheck.Checked
             };
-            if(bufferSizeCheck.Checked)
+            if (bufferSizeCheck.Checked)
             {
                 harness.BufferSize = int.Parse(bufferSizeText.Text.Trim());
             }
-            if(minThreadCheck.Checked)
+            if (minThreadCheck.Checked)
             {
                 harness.MinThreads = int.Parse(threadCountText.Text.Trim());
             }
-            if(maxConnectionCheck.Checked)
+            if (maxConnectionCheck.Checked)
             {
                 harness.MaxConnections = int.Parse(maxConnectionText.Text.Trim());
             }
 
             startButton.Enabled = false;
+
+            // Clear table
+            DataTable table = performanceData.Tables["Performance"];
+            table.Rows.Clear();
+
+            // Start timer
+            graphUpdateTimer.Start();
 
             VoidDelegate d = new VoidDelegate(harness.Start);
             d.BeginInvoke(new AsyncCallback(runComplete), null);
@@ -81,6 +92,10 @@ namespace S3UploadTest
 
         private void runComplete(IAsyncResult result)
         {
+            // Stop timer
+            graphUpdateTimer.Stop();
+
+            harness = null;
             // Re-enable start button
             startButton.Invoke(new VoidDelegate(enableStartButton));
 
@@ -98,7 +113,7 @@ namespace S3UploadTest
         public void LogOutput(string v)
         {
             // Make sure it runs on the event thread.
-            if(outputText.InvokeRequired)
+            if (outputText.InvokeRequired)
             {
                 outputText.Invoke(new LogOutputDelegate(LogOutput), v);
             }
@@ -116,13 +131,74 @@ namespace S3UploadTest
 
         private void threadUpdateTimer_Tick(object sender, EventArgs e)
         {
-            if(currentThreads != null)
+            if (currentThreads != null)
             {
                 int maxWorker, maxIo, availableWorker, availableIo;
                 ThreadPool.GetMaxThreads(out maxWorker, out maxIo);
                 ThreadPool.GetAvailableThreads(out availableWorker, out availableIo);
                 currentThreads.Text = "" + (maxWorker - availableWorker);
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            DataTable table = performanceData.Tables["Performance"];
+
+            for (int i = 0; i < 10; i++)
+            {
+                DataRow row = table.NewRow();
+                row["Time"] = DateTime.Now.AddMinutes(i);
+                row["Bandwidth"] = 100L;
+                row["TPS"] = 100;
+                row["ErrorRate"] = i;
+                table.Rows.Add(row);
+            }
+            //chart1.DataBindTable((table as System.ComponentModel.IListSource).GetList(), "Time");
+
+            //foreach (Series s in chart1.Series)
+            //{
+            //    s.ChartType = SeriesChartType.Line;
+            //}
+
+            chart1.Series["Bandwidth"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "Bandwidth", null);
+            chart1.Series["TPS"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "TPS", null);
+            chart1.Series["Error Rate"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "TPS", null);
+
+
+            //chart1.DataSource = performanceData;
+            //chart1.Series["Performance"].XValueMember = "Time";
+            //chart1.Series["Performance"].YValueMembers = "TPS";
+
+            //chart1.DataBind();
+
+            //chart1.Series[0].YValueMembers = "TPS";
+            // Debug.WriteLine(chart1.Series[0].YValueMembers);
+        }
+
+        private void graphUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (harness == null) return;
+
+            DataTable table = performanceData.Tables["Performance"];
+
+            DataRow row = table.NewRow();
+            row["Time"] = DateTime.Now;
+            row["Bandwidth"] = Interlocked.Exchange(ref harness.bytesPerSec, 0);
+            int tps = Interlocked.Exchange(ref harness.tps, 0);
+            row["TPS"] = tps;
+            int errors = Interlocked.Exchange(ref harness.errors, 0);
+            int errorRate = 0;
+            if(tps > 0) {
+                errorRate = errors * 100 / tps;
+            }
+            row["ErrorRate"] = errorRate;
+            table.Rows.Add(row);
+
+            // Update Graph
+            chart1.Series["Bandwidth"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "Bandwidth", null);
+            chart1.Series["TPS"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "TPS", null);
+            chart1.Series["Error Rate"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "ErrorRate", null);
+
         }
     }
 }

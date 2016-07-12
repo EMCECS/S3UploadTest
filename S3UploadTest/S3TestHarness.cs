@@ -58,6 +58,10 @@ namespace S3UploadTest
         public int SuccessCount { get { return successCount; } }
         private int successCount;
 
+        public int tps;
+        public long bytesPerSec;
+        public int errors;
+
         public TimeSpan Duration { get; private set; }
 
         AmazonS3Client s3;
@@ -193,9 +197,13 @@ namespace S3UploadTest
                         InputStream = new MemoryStream(d.Data)
                     });
                     Interlocked.Increment(ref successCount);
+                    Interlocked.Increment(ref tps);
+                    Interlocked.Add(ref bytesPerSec, d.Data.LongLength);
                 } catch(Exception e)
                 {
                     Interlocked.Increment(ref failureCount);
+                    Interlocked.Increment(ref tps);
+                    Interlocked.Increment(ref errors);
                     Parent.LogOutput(string.Format("Error uploading {0}: {1}", d.Name, e.ToString()));
                 }
 
@@ -218,6 +226,7 @@ namespace S3UploadTest
                         BucketName = bucketName,
                         Marker = resp.NextMarker
                     });
+                    Interlocked.Increment(ref successCount);
                 }
                 Parallel.ForEach(resp.S3Objects, obj => {
                     s3.DeleteObject(new DeleteObjectRequest()
@@ -225,6 +234,7 @@ namespace S3UploadTest
                         BucketName = bucketName,
                         Key = obj.Key
                     });
+                    Interlocked.Increment(ref successCount);
                 });
             } while (resp.IsTruncated);
         }

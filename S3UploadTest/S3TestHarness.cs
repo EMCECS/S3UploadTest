@@ -121,7 +121,9 @@ namespace S3UploadTest
             {
                 ForcePathStyle = (!UseVhostBuckets),
                 SignatureVersion = "2",
-                ServiceURL = Endpoint
+                ServiceURL = Endpoint,
+                MaxErrorRetry = 0,
+                ReadWriteTimeout = TimeSpan.FromSeconds(10)
             };
             if(MaxConnections != -1)
             {
@@ -226,7 +228,7 @@ namespace S3UploadTest
                         BucketName = bucketName,
                         Marker = resp.NextMarker
                     });
-                    Interlocked.Increment(ref successCount);
+                    Interlocked.Increment(ref tps);
                 }
                 Parallel.ForEach(resp.S3Objects, obj => {
                     s3.DeleteObject(new DeleteObjectRequest()
@@ -234,7 +236,7 @@ namespace S3UploadTest
                         BucketName = bucketName,
                         Key = obj.Key
                     });
-                    Interlocked.Increment(ref successCount);
+                    Interlocked.Increment(ref tps);
                 });
             } while (resp.IsTruncated);
         }

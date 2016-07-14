@@ -105,7 +105,7 @@ namespace S3UploadTest
             else
             {
                 string s = string.Format("{0:u} - {1}\r\n", DateTime.UtcNow, v);
-                outputText.Text += s;
+                outputText.AppendText(s);
             }
         }
 

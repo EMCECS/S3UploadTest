@@ -39,39 +39,23 @@ namespace S3UploadTest
             InitializeComponent();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            bufferSizeText.Enabled = bufferSizeCheck.Checked;
-        }
-
         delegate void VoidDelegate();
         private void startButton_Click(object sender, EventArgs e)
         {
             clearOutput();
-            LogOutput("Starting run...");
+            LogCreate("Starting run...");
             S3TestHarness harness = new S3TestHarness()
             {
                 AccessKey = accessKeyText.Text.Trim(),
                 SecretKey = secretKeyText.Text.Trim(),
-                Endpoint = endpointText.Text.Trim(),
-                ObjectCount = int.Parse(objectCountText.Text.Trim()),
+                Endpoint = endpointVdc1Text.Text.Trim(),
+                ObjectCount = 0,
                 ObjectSize = int.Parse(objectSizeText.Text.Trim()),
                 Parent = this,
                 UseVhostBuckets = useVhostCheck.Checked,
-                NoCleanup = noCleanupCheck.Checked
+                NoCleanup = true
             };
-            if(bufferSizeCheck.Checked)
-            {
-                harness.BufferSize = int.Parse(bufferSizeText.Text.Trim());
-            }
-            if(minThreadCheck.Checked)
-            {
-                harness.MinThreads = int.Parse(threadCountText.Text.Trim());
-            }
-            if(maxConnectionCheck.Checked)
-            {
-                harness.MaxConnections = int.Parse(maxConnectionText.Text.Trim());
-            }
+
 
             startButton.Enabled = false;
 
@@ -95,34 +79,58 @@ namespace S3UploadTest
         }
 
         private delegate void LogOutputDelegate(string s);
-        public void LogOutput(string v)
+        public void LogCreate(string v)
         {
             // Make sure it runs on the event thread.
-            if(outputText.InvokeRequired)
+            if(createText.InvokeRequired)
             {
-                outputText.Invoke(new LogOutputDelegate(LogOutput), v);
+                createText.Invoke(new LogOutputDelegate(LogCreate), v);
             }
             else
             {
                 string s = string.Format("{0:u} - {1}\r\n", DateTime.UtcNow, v);
-                outputText.AppendText(s);
+                createText.AppendText(s);
+            }
+        }
+
+        public void LogReplicate(string v)
+        {
+            // Make sure it runs on the event thread.
+            if (createText.InvokeRequired)
+            {
+                replicateText.Invoke(new LogOutputDelegate(LogReplicate), v);
+            }
+            else
+            {
+                string s = string.Format("{0:u} - {1}\r\n", DateTime.UtcNow, v);
+                replicateText.AppendText(s);
+            }
+        }
+
+        public void LogRead(string v)
+        {
+            // Make sure it runs on the event thread.
+            if (createText.InvokeRequired)
+            {
+                readText.Invoke(new LogOutputDelegate(LogRead), v);
+            }
+            else
+            {
+                string s = string.Format("{0:u} - {1}\r\n", DateTime.UtcNow, v);
+                readText.AppendText(s);
             }
         }
 
         private void clearOutput()
         {
-            outputText.Text = "";
+            createText.Text = "";
+            replicateText.Text = "";
+            readText.Text = "";
         }
 
-        private void threadUpdateTimer_Tick(object sender, EventArgs e)
+        private void objectSizeText_TextChanged(object sender, EventArgs e)
         {
-            if(currentThreads != null)
-            {
-                int maxWorker, maxIo, availableWorker, availableIo;
-                ThreadPool.GetMaxThreads(out maxWorker, out maxIo);
-                ThreadPool.GetAvailableThreads(out availableWorker, out availableIo);
-                currentThreads.Text = "" + (maxWorker - availableWorker);
-            }
+
         }
     }
 }

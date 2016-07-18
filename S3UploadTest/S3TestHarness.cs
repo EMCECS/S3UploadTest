@@ -77,29 +77,29 @@ namespace S3UploadTest
         public void Start()
         {
             try {
-                Parent.LogOutput("Initializing Connection...");
+                Parent.LogCreate("Initializing Connection...");
                 connect();
 
-                Parent.LogOutput("Creating Bucket...");
+                Parent.LogCreate("Creating Bucket...");
                 createBucket();
 
-                Parent.LogOutput("Generating Test Data...");
+                Parent.LogCreate("Generating Test Data...");
                 generateTestData();
 
-                Parent.LogOutput("Uploading Objects...");
+                Parent.LogCreate("Uploading Objects...");
                 startTime = DateTime.Now;
                 runTest();
                 Duration = DateTime.Now - startTime;
-                Parent.LogOutput("Upload Complete.");
+                Parent.LogCreate("Upload Complete.");
 
                 if (NoCleanup)
                 {
-                    Parent.LogOutput(string.Format("Cleanup skipped, see bucket {0}", bucketName));
+                    Parent.LogCreate(string.Format("Cleanup skipped, see bucket {0}", bucketName));
                 } else { 
-                    Parent.LogOutput("Cleaning up objects");
+                    Parent.LogCreate("Cleaning up objects");
                     cleanupObjects();
 
-                    Parent.LogOutput("Removing test bucket...");
+                    Parent.LogCreate("Removing test bucket...");
                     deleteBucket();
                 }
 
@@ -107,7 +107,7 @@ namespace S3UploadTest
                 printSummary();
             } catch (Exception e)
             {
-                Parent.LogOutput(string.Format("CRITICAL FAILURE: {0}\r\n{1}", e.Message, e.StackTrace));
+                Parent.LogCreate(string.Format("CRITICAL FAILURE: {0}\r\n{1}", e.Message, e.StackTrace));
             }
         }
 
@@ -130,8 +130,8 @@ namespace S3UploadTest
             }
             s3 = new AmazonS3Client(new BasicAWSCredentials(AccessKey, SecretKey), config);
 
-            Parent.LogOutput(string.Format(" - Buffer size is {0} bytes", s3.Config.BufferSize));
-            Parent.LogOutput(string.Format(" - Connection limit is {0}", s3.Config.ConnectionLimit));
+            Parent.LogCreate(string.Format(" - Buffer size is {0} bytes", s3.Config.BufferSize));
+            Parent.LogCreate(string.Format(" - Connection limit is {0}", s3.Config.ConnectionLimit));
         }
 
         private void createBucket()
@@ -167,15 +167,15 @@ namespace S3UploadTest
             int ioThreads = 0;
 
             ThreadPool.GetMinThreads(out workerThreads, out ioThreads);
-            Parent.LogOutput(string.Format(" - Min threads: worker: {0} IO: {1}", workerThreads, ioThreads));
+            Parent.LogCreate(string.Format(" - Min threads: worker: {0} IO: {1}", workerThreads, ioThreads));
 
             if(MinThreads != -1)
             {
-                Parent.LogOutput(string.Format(" -> Setting Min worker threads to {0}", MinThreads));
+                Parent.LogCreate(string.Format(" -> Setting Min worker threads to {0}", MinThreads));
                 bool success = ThreadPool.SetMinThreads(MinThreads, ioThreads);
                 if (!success)
                 {
-                    Parent.LogOutput("  FAILED!");
+                    Parent.LogCreate("  FAILED!");
                 }
             }
 
@@ -196,7 +196,7 @@ namespace S3UploadTest
                 } catch(Exception e)
                 {
                     Interlocked.Increment(ref failureCount);
-                    Parent.LogOutput(string.Format("Error uploading {0}: {1}", d.Name, e.ToString()));
+                    Parent.LogCreate(string.Format("Error uploading {0}: {1}", d.Name, e.ToString()));
                 }
 
             });
@@ -241,7 +241,7 @@ namespace S3UploadTest
         {
             double objPerSec = (double)SuccessCount / Duration.TotalSeconds;
             double mbPerSec = ((double)SuccessCount * (double)ObjectSize / (1024.0 * 1024.0)) / Duration.TotalSeconds;
-            Parent.LogOutput(string.Format("Uploaded {0} objects in {1}ms: {2:F2} obj/s {3:F2} MB/s, {4} Failures", SuccessCount, Duration.TotalMilliseconds, objPerSec, mbPerSec, FailureCount));
+            Parent.LogCreate(string.Format("Uploaded {0} objects in {1}ms: {2:F2} obj/s {3:F2} MB/s, {4} Failures", SuccessCount, Duration.TotalMilliseconds, objPerSec, mbPerSec, FailureCount));
         }
 
     }

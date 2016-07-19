@@ -37,6 +37,7 @@ namespace S3UploadTest
     public partial class Form1 : Form
     {
         private S3TestHarness harness;
+        private DateTime lastTick;
 
         public Form1()
         {
@@ -84,6 +85,7 @@ namespace S3UploadTest
             table.Rows.Clear();
 
             // Start timer
+            lastTick = DateTime.Now;
             graphUpdateTimer.Start();
 
             VoidDelegate d = new VoidDelegate(harness.Start);
@@ -120,7 +122,7 @@ namespace S3UploadTest
             else
             {
                 string s = string.Format("{0:u} - {1}\r\n", DateTime.UtcNow, v);
-                outputText.Text += s;
+                outputText.AppendText(s);
             }
         }
 
@@ -179,12 +181,15 @@ namespace S3UploadTest
         {
             if (harness == null) return;
 
+            TimeSpan tickDuration = DateTime.Now - lastTick;
+            int ms = (int)tickDuration.TotalMilliseconds;
+
             DataTable table = performanceData.Tables["Performance"];
 
             DataRow row = table.NewRow();
             row["Time"] = DateTime.Now;
-            row["Bandwidth"] = Interlocked.Exchange(ref harness.bytesPerSec, 0);
-            int tps = Interlocked.Exchange(ref harness.tps, 0);
+            row["Bandwidth"] = Interlocked.Exchange(ref harness.bytesPerSec, 0) * 1000 / ms;
+            int tps = Interlocked.Exchange(ref harness.tps, 0) * 1000 / ms;
             row["TPS"] = tps;
             int errors = Interlocked.Exchange(ref harness.errors, 0);
             int errorRate = 0;
@@ -198,6 +203,8 @@ namespace S3UploadTest
             chart1.Series["Bandwidth"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "Bandwidth", null);
             chart1.Series["TPS"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "TPS", null);
             chart1.Series["Error Rate"].Points.DataBind((table as System.ComponentModel.IListSource).GetList(), "Time", "ErrorRate", null);
+
+            lastTick = DateTime.Now;
 
         }
     }

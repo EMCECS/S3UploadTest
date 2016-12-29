@@ -71,7 +71,7 @@ namespace S3UploadTest
         Dictionary<AmazonS3Client, DateTime> penaltyBox;
 
         List<string> objectKeys;
-        List<string> blacklistedKeys;
+        //List<string> blacklistedKeys;
 
         private string bucketName;
         private List<TestData> data;
@@ -96,7 +96,7 @@ namespace S3UploadTest
             penaltyBox = new Dictionary<AmazonS3Client, DateTime>();
             r = new Random();
             objectKeys = new List<string>();
-            blacklistedKeys = new List<string>();
+            //blacklistedKeys = new List<string>();
         }
 
         public void Start()
@@ -302,7 +302,6 @@ namespace S3UploadTest
                     Interlocked.Increment(ref errors);
                     Parent.LogOutput(string.Format("Error reading {0}: {1}, Connection: {2}", key, e.Message, s3c.Config.ServiceURL));
                     handleFailure(e, s3c);
-                    blacklist(key);
                 }
             });
         }
@@ -338,7 +337,6 @@ namespace S3UploadTest
                     Interlocked.Increment(ref errors);
                     Parent.LogOutput(string.Format("Error writing {0}: {1}, Connection: {2}", key, e.Message, s3c.Config.ServiceURL));
                     handleFailure(e, s3c);
-                    blacklist(key);
                 }
             });
         }
@@ -351,33 +349,6 @@ namespace S3UploadTest
             }
         }
 
-        private void blacklist(string key)
-        {
-            lock(objectKeys)
-            {
-                objectKeys.Remove(key);
-
-                // Don't let *all* the keys get blacklisted.
-                if(objectKeys.Count == 0)
-                {
-                    Debug.WriteLine("CRITICAL: All object keys blacklisted!  Jailbreak them and try again.");
-                    lock(blacklistedKeys)
-                    {
-                        foreach(string k in blacklistedKeys)
-                        {
-                            objectKeys.Add(k);
-                        }
-                        blacklistedKeys.Clear();
-                        return;
-                    }
-                }
-            }
-
-            lock(blacklistedKeys)
-            {
-                blacklistedKeys.Add(key);
-            }
-        }
 
         private void cleanupObjects()
         {
@@ -629,7 +600,7 @@ namespace S3UploadTest
         {
             Debug.WriteLine(string.Format("== {0} ==", DateTime.Now));
             Debug.WriteLine("INFO: Connections: Good: {0} Bad {1}", s3.Count, penaltyBox.Count);
-            Debug.WriteLine("INFO: Objects: Good: {0} Bad {1}", objectKeys.Count, blacklistedKeys.Count);
+            Debug.WriteLine("INFO: Objects: Good: {0}", objectKeys.Count);
         }
 
     }

@@ -50,13 +50,13 @@ namespace S3UploadTest
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -149,6 +149,8 @@ namespace S3UploadTest
             // bufferSizeCheck
             // 
             this.bufferSizeCheck.AutoSize = true;
+            this.bufferSizeCheck.Checked = true;
+            this.bufferSizeCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.bufferSizeCheck.Location = new System.Drawing.Point(13, 196);
             this.bufferSizeCheck.Name = "bufferSizeCheck";
             this.bufferSizeCheck.Size = new System.Drawing.Size(77, 17);
@@ -204,7 +206,7 @@ namespace S3UploadTest
             this.objectCountText.Name = "objectCountText";
             this.objectCountText.Size = new System.Drawing.Size(196, 20);
             this.objectCountText.TabIndex = 12;
-            this.objectCountText.Text = "2000";
+            this.objectCountText.Text = "200000";
             // 
             // threadCountText
             // 
@@ -259,6 +261,8 @@ namespace S3UploadTest
             // minThreadCheck
             // 
             this.minThreadCheck.AutoSize = true;
+            this.minThreadCheck.Checked = true;
+            this.minThreadCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.minThreadCheck.Location = new System.Drawing.Point(13, 171);
             this.minThreadCheck.Name = "minThreadCheck";
             this.minThreadCheck.Size = new System.Drawing.Size(15, 14);
@@ -404,36 +408,36 @@ namespace S3UploadTest
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea4.Name = "BandwidthArea";
-            chartArea5.Name = "TPSArea";
-            chartArea6.AxisY.Maximum = 100D;
-            chartArea6.AxisY.Minimum = 0D;
-            chartArea6.Name = "ErrorRateArea";
-            this.chart1.ChartAreas.Add(chartArea4);
-            this.chart1.ChartAreas.Add(chartArea5);
-            this.chart1.ChartAreas.Add(chartArea6);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea1.Name = "BandwidthArea";
+            chartArea2.Name = "TPSArea";
+            chartArea3.AxisY.Maximum = 100D;
+            chartArea3.AxisY.Minimum = 0D;
+            chartArea3.Name = "ErrorRateArea";
+            this.chart1.ChartAreas.Add(chartArea1);
+            this.chart1.ChartAreas.Add(chartArea2);
+            this.chart1.ChartAreas.Add(chartArea3);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(497, 10);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "BandwidthArea";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "Bandwidth";
-            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
-            series5.ChartArea = "TPSArea";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Legend = "Legend1";
-            series5.Name = "TPS";
-            series5.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
-            series6.ChartArea = "ErrorRateArea";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Legend = "Legend1";
-            series6.Name = "Error Rate";
-            series6.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
-            this.chart1.Series.Add(series4);
-            this.chart1.Series.Add(series5);
-            this.chart1.Series.Add(series6);
+            series1.ChartArea = "BandwidthArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Bandwidth";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            series2.ChartArea = "TPSArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "TPS";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            series3.ChartArea = "ErrorRateArea";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Error Rate";
+            series3.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Series.Add(series3);
             this.chart1.Size = new System.Drawing.Size(541, 648);
             this.chart1.TabIndex = 27;
             this.chart1.Text = "chart1";
